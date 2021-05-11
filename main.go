@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"strings"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 	"io/ioutil"
 	"os"
 )
