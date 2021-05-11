@@ -6,16 +6,17 @@ import (
 	"github.com/urfave/cli"
 	"io/ioutil"
 	"os"
+	"runtime"
 )
 
 var (
-	configFilePath = ""
-	h = '\u2500'
-	last = '\u2516'
-	mid = '\u2520'
-	v = '\u2503'
-	ress = ""
-	flags = []cli.Flag{
+configFilePath = ""
+h = '\u2500'
+last = '\u2516'
+mid = '\u2520'
+v = '\u2503'
+ress = ""
+flags = []cli.Flag{
 		&cli.StringFlag{
 			Name:        "config",
 			Aliases:     []string{"c"},
@@ -23,6 +24,31 @@ var (
 		},
 	}
 )
+
+
+var Reset  = "\033[0m"
+var Red    = "\033[31m"
+var Green  = "\033[32m"
+var Yellow = "\033[33m"
+var Blue   = "\033[34m"
+var Purple = "\033[35m"
+var Cyan   = "\033[36m"
+var Gray   = "\033[37m"
+var White  = "\033[97m"
+
+func init() {
+	if runtime.GOOS == "windows" {
+		Reset  = ""
+		Red    = ""
+		Green  = ""
+		Yellow = ""
+		Blue   = ""
+		Purple = ""
+		Cyan   = ""
+		Gray   = ""
+		White  = ""
+	}
+}
 
 func main(){
 	app := cli.NewApp()
@@ -73,10 +99,10 @@ func print(s string, n int) {
 				res += string(mid)
 			}
 			if d.IsDir() {
-				res+=string(h)+d.Name()
+				res+= Blue + string(h)+d.Name() + Reset
 				ress+=res+"\n"
 			}else{
-				res+=string(h)+string(h)+d.Name()
+				res+= Yellow + string(h)+string(h)+d.Name() + Reset
 				ress+=res+"\n"
 			}
 			print(s+"/"+d.Name(),n+1)
