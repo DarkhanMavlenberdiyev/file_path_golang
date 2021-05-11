@@ -2,27 +2,34 @@ package main
 
 import (
 	"fmt"
-	"strings"
 	"github.com/urfave/cli"
 	"io/ioutil"
 	"os"
 	"runtime"
+	"strings"
 )
 
 var (
-configFilePath = ""
-h = '\u2500'
-last = '\u2516'
-mid = '\u2520'
-v = '\u2503'
-ress = ""
-flags = []cli.Flag{
-		&cli.StringFlag{
-			Name:        "config",
-			Aliases:     []string{"c"},
-			Destination: &configFilePath,
-		},
-	}
+	configFilePath = ""
+	h = '\u2500'
+	last = '\u2516'
+	mid = '\u2520'
+	v = '\u2503'
+	ress = ""
+
+	flags = []cli.Flag{
+			&cli.StringFlag{
+				Name:        "path",
+				Aliases:     []string{"p"},
+				Usage: 		"set path to dir, empty value means current directory",
+				Destination: &configFilePath,
+			},
+			&cli.BoolFlag{
+				Name:        "no-color",
+				Aliases:     []string{"nc"},
+				Usage:       "set no color",
+			},
+		}
 )
 
 
@@ -38,32 +45,46 @@ var White  = "\033[97m"
 
 func init() {
 	if runtime.GOOS == "windows" {
-		Reset  = ""
-		Red    = ""
-		Green  = ""
-		Yellow = ""
-		Blue   = ""
-		Purple = ""
-		Cyan   = ""
-		Gray   = ""
-		White  = ""
+		switchColor()
 	}
+}
+
+func switchColor() {
+	Reset  = ""
+	Red    = ""
+	Green  = ""
+	Yellow = ""
+	Blue   = ""
+	Purple = ""
+	Cyan   = ""
+	Gray   = ""
+	White  = ""
 }
 
 func main(){
 	app := cli.NewApp()
-	app.Flags = flags
 	app.Commands = cli.Commands{
 		&cli.Command{
 			Name: "printdir",
 			Action: PrintDir,
+			Flags: flags,
+			Usage: "Show dir tree",
 		},
 	}
 	app.Run(os.Args)
 }
 
-
 func PrintDir(c *cli.Context) error {
+	if c.IsSet("no-color") {
+		switchColor()
+	}
+	if configFilePath == "" {
+		path, err := os.Getwd()
+		if err != nil {
+			return err
+		}
+		configFilePath = path
+	}
 	print(configFilePath,0)
 	lis := strings.Split(ress,"\n")
 	lis2 := make([][]string,0)

@@ -1,9 +1,14 @@
 #Printdir
-## Usage
+### Usage
 ```shell
-./main --c <absolute path> printdir
+./main printdir --c <absolute path>
 ```
-## Example
+### Example
 ```shell
-./main  --c /Users/username/some/path/
+./main printdir --c /Users/username/some/path/
+```
+
+show current directory
+```shell
+./main printdir 
 ```
