@@ -30,8 +30,14 @@ var (
 				Usage:       "set no color",
 			},
 		}
+
+		counts = Counts{}
 )
 
+type Counts struct {
+	Dirs 	int64
+	Files 	int64
+}
 
 var Reset  = "\033[0m"
 var Red    = "\033[31m"
@@ -102,7 +108,8 @@ func PrintDir(c *cli.Context) error {
 	for _,li := range lis2 {
 		ress+= strings.Join(li,"")+"\n"
 	}
-	fmt.Println(ress)
+	fmt.Print(ress)
+	fmt.Println(fmt.Sprintf("%vDirectories: %d\nFiles: %d%v", Green, counts.Dirs, counts.Files, Reset))
 	return nil
 }
 
@@ -122,9 +129,11 @@ func print(s string, n int) {
 			if d.IsDir() {
 				res+= Blue + string(h)+d.Name() + Reset
 				ress+=res+"\n"
+				counts.Dirs += 1
 			}else{
 				res+= Yellow + string(h)+string(h)+d.Name() + Reset
 				ress+=res+"\n"
+				counts.Files += 1
 			}
 			print(s+"/"+d.Name(),n+1)
 		}
