@@ -29,6 +29,12 @@ var (
 				Aliases:     []string{"nc"},
 				Usage:       "set no color",
 			},
+			// flag for including dot dirs
+			&cli.BoolFlag{
+				Name:        "dot-dirs",
+				Aliases:     []string{"dd"},
+				Usage:       "print include dot files",
+			},
 		}
 
 		counts = Counts{}
@@ -84,6 +90,9 @@ func PrintDir(c *cli.Context) error {
 	if c.IsSet("no-color") {
 		switchColor()
 	}
+
+	dotFiles := c.IsSet("dot-dirs")
+
 	if configFilePath == "" {
 		path, err := os.Getwd()
 		if err != nil {
@@ -91,7 +100,7 @@ func PrintDir(c *cli.Context) error {
 		}
 		configFilePath = path
 	}
-	print(configFilePath,0)
+	print(configFilePath,0, dotFiles)
 	lis := strings.Split(ress,"\n")
 	lis2 := make([][]string,0)
 	for _,c := range lis {
@@ -113,7 +122,7 @@ func PrintDir(c *cli.Context) error {
 	return nil
 }
 
-func print(s string, n int) {
+func print(s string, n int, dotFiles bool) {
 	dir,er := ioutil.ReadDir(s)
 	if er == nil {
 		for i,d := range dir {
@@ -127,6 +136,9 @@ func print(s string, n int) {
 				res += string(mid)
 			}
 			if d.IsDir() {
+				if !dotFiles && d.Name()[0] == 46 {
+					continue
+				}
 				res+= Blue + string(h)+d.Name() + Reset
 				ress+=res+"\n"
 				counts.Dirs += 1
@@ -135,7 +147,7 @@ func print(s string, n int) {
 				ress+=res+"\n"
 				counts.Files += 1
 			}
-			print(s+"/"+d.Name(),n+1)
+			print(s+"/"+d.Name(),n+1, dotFiles)
 		}
 	}
 }
